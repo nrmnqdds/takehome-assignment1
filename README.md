@@ -4,6 +4,7 @@ A modern React Native authentication application built with Expo, featuring logi
 
 ## 📋 Table of Contents
 
+- [Demo Video](#demo-video)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Prerequisites](#prerequisites)
@@ -15,6 +16,25 @@ A modern React Native authentication application built with Expo, featuring logi
 - [Testing the App](#testing-the-app)
 - [Troubleshooting](#troubleshooting)
 - [Future Enhancements](#future-enhancements)
+
+## 🎥 Demo Video
+
+Watch a complete walkthrough of the application features and functionality:
+
+[![Demo Video](https://img.shields.io/badge/Watch-Demo%20Video-red?style=for-the-badge&logo=youtube)](https://r2.quddus.my/demo1-compressed.mp4)
+
+### What's Covered in the Demo:
+
+- 📱 **App Overview** - Navigation and screen flow
+- 🔐 **Signup Process** - Creating a new account with validation
+- ✅ **Real-time Validation** - Inline error messages and feedback
+- 🔑 **Login Flow** - Authenticating with existing credentials
+- 🏠 **Home Screen** - User information display
+- 💾 **Persistence** - App restart while staying logged in
+- 🚪 **Logout** - Signing out functionality
+- 👁️ **Password Toggle** - Show/hide password feature
+- ✓ **Password Match** - Visual confirmation indicator
+- ❌ **Error Handling** - Validation and authentication errors
 
 ## ✨ Features
 
@@ -66,12 +86,14 @@ Before you begin, ensure you have the following installed:
 ## 🚀 Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd takehome-assignment1
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
@@ -160,10 +182,11 @@ takehome-assignment1/
 The authentication state is managed globally using React Context API.
 
 **Interface:**
+
 ```typescript
 interface AuthContextType {
-  user: User | null;              // Current user or null
-  isLoading: boolean;             // Loading state
+  user: User | null; // Current user or null
+  isLoading: boolean; // Loading state
   login: (params) => Promise<AuthResult>;
   signup: (params) => Promise<AuthResult>;
   logout: () => Promise<AuthResult>;
@@ -171,6 +194,7 @@ interface AuthContextType {
 ```
 
 **User Object:**
+
 ```typescript
 interface User {
   name: string;
@@ -180,6 +204,7 @@ interface User {
 ```
 
 **Result Object Pattern:**
+
 ```typescript
 interface AuthResult {
   success: boolean;
@@ -188,6 +213,7 @@ interface AuthResult {
 ```
 
 **Key Features:**
+
 - Global authentication state
 - Persistent storage with AsyncStorage
 - Type-safe operations
@@ -195,12 +221,13 @@ interface AuthResult {
 - Automatic state loading on app start
 
 **Usage:**
+
 ```typescript
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from "@/context/AuthContext";
 
 function MyComponent() {
   const { user, login, logout } = useAuth();
-  
+
   const handleLogin = async () => {
     const result = await login({ email, password });
     if (!result.success) {
@@ -213,6 +240,7 @@ function MyComponent() {
 ### 2. Login Screen (`src/navigation/screens/auth/Login.tsx`)
 
 **Features:**
+
 - Email and password input fields
 - Real-time validation as user types
 - On-blur validation
@@ -222,10 +250,12 @@ function MyComponent() {
 - Navigation to Signup screen
 
 **Validation Rules:**
+
 - **Email**: Required, valid format (`user@domain.com`)
 - **Password**: Required, minimum 6 characters
 
 **Error Messages:**
+
 - "Email is required"
 - "Email address is incomplete"
 - "Password is required"
@@ -233,6 +263,7 @@ function MyComponent() {
 - "Invalid email or password" (from server)
 
 **User Flow:**
+
 1. User enters email and password
 2. Validation occurs on blur or as typing (password)
 3. Submit triggers full validation
@@ -243,6 +274,7 @@ function MyComponent() {
 ### 3. Signup Screen (`src/navigation/screens/auth/Signup.tsx`)
 
 **Features:**
+
 - Name, email, password, and confirm password fields
 - Real-time validation as user types
 - On-blur validation
@@ -253,17 +285,20 @@ function MyComponent() {
 - Navigation to Login screen
 
 **Validation Rules:**
+
 - **Name**: Required, minimum 2 characters
 - **Email**: Required, valid format
 - **Password**: Required, minimum 6 characters
 - **Confirm Password**: Required, must match password
 
 **Password Match Indicator:**
+
 - ✓ **Green checkmark** + green border when passwords match
 - ✗ **Red X** + red border when passwords don't match
 - Shows "Passwords match" or error message beneath field
 
 **Error Messages:**
+
 - "Name is required"
 - "Name must be at least 2 characters"
 - "Email is required"
@@ -275,6 +310,7 @@ function MyComponent() {
 - "User with this email already exists" (from server)
 
 **User Flow:**
+
 1. User fills in registration form
 2. Real-time validation provides immediate feedback
 3. Password match indicator shows status
@@ -286,12 +322,14 @@ function MyComponent() {
 ### 4. Home Screen (`src/navigation/screens/Home.tsx`)
 
 **Features:**
+
 - Displays logged-in user's name and email in a card
 - Logout button with confirmation dialog
 - Navigation to Profile and Settings screens
 - Welcome message
 
 **User Information Displayed:**
+
 ```
 Welcome!
 Name: [User's Name]
@@ -299,6 +337,7 @@ Email: [User's Email]
 ```
 
 **Logout Flow:**
+
 1. User taps "Logout" button
 2. Confirmation dialog appears
 3. User confirms
@@ -308,16 +347,19 @@ Email: [User's Email]
 ### 5. Real-Time Inline Validation
 
 **Validation Triggers:**
+
 - **On Blur**: Validates when user leaves a field
 - **On Change**: Real-time validation for password fields
 - **On Submit**: Validates all fields before submission
 
 **Visual Indicators:**
+
 - **Red border** (`#E53935`) on invalid fields
 - **Error text** beneath field in red
 - **Disappears** immediately when user starts correcting
 
 **Smart Display Logic:**
+
 - Only shows errors after field is "touched" (blurred)
 - Clears errors as user types corrections
 - Prevents annoying premature error messages
@@ -325,6 +367,7 @@ Email: [User's Email]
 ### 6. Persistent Authentication
 
 **Implementation:**
+
 - Uses `@react-native-async-storage/async-storage`
 - Stores current user in `@auth_user` key
 - Stores all registered users in `@auth_users` key
@@ -332,12 +375,14 @@ Email: [User's Email]
 - Shows loading screen while checking storage
 
 **Storage Keys:**
+
 ```typescript
-AUTH_STORAGE_KEY = "@auth_user"      // Current logged-in user
-USERS_STORAGE_KEY = "@auth_users"    // All registered users
+AUTH_STORAGE_KEY = "@auth_user"; // Current logged-in user
+USERS_STORAGE_KEY = "@auth_users"; // All registered users
 ```
 
 **Flow:**
+
 ```
 App Start
   ↓
@@ -350,10 +395,12 @@ Check AsyncStorage for @auth_user
 ### 7. Navigation Structure
 
 **Auth Stack** (Unauthenticated):
+
 - Login Screen
 - Signup Screen
 
 **Main Stack** (Authenticated):
+
 - Home Tabs
   - Home Screen (Feed)
   - Updates Screen
@@ -363,10 +410,11 @@ Check AsyncStorage for @auth_user
 - 404 Not Found
 
 **Conditional Rendering:**
+
 ```typescript
 export function Navigation(props) {
   const { user, isLoading } = useAuth();
-  
+
   if (isLoading) return <LoadingScreen />;
   if (!user) return <AuthNavigation />;
   return <MainNavigation />;
@@ -378,16 +426,18 @@ export function Navigation(props) {
 Clean imports using `@/` prefix instead of relative paths.
 
 **Configuration:**
+
 - `tsconfig.json`: TypeScript path mapping
 - `babel.config.js`: Runtime module resolution
 
 **Example:**
+
 ```typescript
 // ❌ Old way
-import { useAuth } from '../../../context/AuthContext';
+import { useAuth } from "../../../context/AuthContext";
 
 // ✅ New way
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from "@/context/AuthContext";
 ```
 
 ### 9. Form State Management
@@ -412,6 +462,7 @@ const updateFormField = (field: keyof SignupFormState, value: string | boolean) 
 ```
 
 **Benefits:**
+
 - Single `useState` instead of multiple
 - Type-safe field updates
 - Unified update function
@@ -433,6 +484,7 @@ if (!result.success && result.error) {
 ```
 
 **Benefits:**
+
 - Predictable control flow
 - Type-safe
 - No exception handling
@@ -562,6 +614,7 @@ Proceed if valid
 ### Issue: App won't start
 
 **Solution:**
+
 ```bash
 # Clear npm cache
 npm cache clean --force
@@ -577,6 +630,7 @@ npx expo start -c
 ### Issue: TypeScript errors
 
 **Solution:**
+
 ```bash
 # Run TypeScript check
 npx tsc --noEmit
@@ -588,6 +642,7 @@ npm install --save-dev @types/react @types/react-native
 ### Issue: AsyncStorage not working
 
 **Solution:**
+
 ```bash
 # Reinstall AsyncStorage
 npm install @react-native-async-storage/async-storage
@@ -600,6 +655,7 @@ npm run ios  # or npm run android
 ### Issue: Path aliases not working
 
 **Solution:**
+
 1. Check `babel.config.js` has module-resolver plugin
 2. Check `tsconfig.json` has paths configuration
 3. Restart Metro bundler: `npx expo start -c`
@@ -608,12 +664,14 @@ npm run ios  # or npm run android
 ### Issue: Navigation doesn't update after login
 
 **Solution:**
+
 - Ensure `AuthProvider` wraps the entire `Navigation` component in `App.tsx`
 - Check that the context is being consumed correctly with `useAuth()`
 
 ### Issue: Validation not showing
 
 **Solution:**
+
 - Check that field has been "touched" (blurred)
 - Verify error state is being set correctly
 - Check conditional rendering logic in component
