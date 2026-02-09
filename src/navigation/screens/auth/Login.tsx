@@ -138,17 +138,13 @@ export function Login() {
     }
 
     updateFormField("isLoading", true);
-    try {
-      await login({ email: email.trim(), password });
-      // Navigation will be handled automatically by the auth state change
-    } catch (error) {
-      Alert.alert(
-        "Login Failed",
-        error instanceof Error ? error.message : "An error occurred",
-      );
-    } finally {
-      updateFormField("isLoading", false);
+    const result = await login({ email: email.trim(), password });
+    updateFormField("isLoading", false);
+
+    if (!result.success && result.error) {
+      Alert.alert("Login Failed", result.error);
     }
+    // Navigation will be handled automatically by the auth state change
   };
 
   const { email, password, isLoading, showPassword } = formState;

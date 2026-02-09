@@ -13,16 +13,21 @@ interface User {
   id: string;
 }
 
+interface AuthResult {
+  success: boolean;
+  error?: string;
+}
+
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
-  login: (params: { email: string; password: string }) => Promise<void>;
+  login: (params: { email: string; password: string }) => Promise<AuthResult>;
   signup: (params: {
     name: string;
     email: string;
     password: string;
-  }) => Promise<void>;
-  logout: () => Promise<void>;
+  }) => Promise<AuthResult>;
+  logout: () => Promise<AuthResult>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -83,11 +88,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }: {
     email: string;
     password: string;
-  }) => {
+  }): Promise<AuthResult> => {
     try {
       // Validate input
       if (!email || !password) {
-        throw new Error("Email and password are required");
+        return {
+          success: false,
+          error: "Email and password are required",
+        };
       }
 
       // Get stored users
@@ -101,7 +109,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       );
 
       if (!foundUser) {
-        throw new Error("Invalid email or password");
+        return {
+          success: false,
+          error: "Invalid email or password",
+        };
       }
 
       // Create user object without password
@@ -117,9 +128,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         AUTH_STORAGE_KEY,
         JSON.stringify(loggedInUser),
       );
+
+      return { success: true };
     } catch (error) {
       console.error("Login error:", error);
-      throw error;
+      return {
+        success: false,
+        error: "An unexpected error occurred during login",
+      };
     }
   };
 
@@ -131,22 +147,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     name: string;
     email: string;
     password: string;
-  }) => {
+  }): Promise<AuthResult> => {
     try {
       // Validate input
       if (!name || !email || !password) {
-        throw new Error("Name, email, and password are required");
+        return {
+          success: false,
+          error: "Name, email, and password are required",
+        };
       }
 
       // Basic email validation
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
-        throw new Error("Invalid email format");
+        return {
+          success: false,
+          error: "Invalid email format",
+        };
       }
 
       // Password validation (minimum 6 characters)
       if (password.length < 6) {
-        throw new Error("Password must be at least 6 characters");
+        return {
+          success: false,
+          error: "Password must be at least 6 characters",
+        };
       }
 
       // Get stored users
@@ -158,7 +183,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       );
 
       if (existingUser) {
-        throw new Error("User with this email already exists");
+        return {
+          success: false,
+          error: "User with this email already exists",
+        };
       }
 
       // Create new user
@@ -186,19 +214,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         AUTH_STORAGE_KEY,
         JSON.stringify(loggedInUser),
       );
+
+      return { success: true };
     } catch (error) {
       console.error("Signup error:", error);
-      throw error;
+      return {
+        success: false,
+        error: "An unexpected error occurred during signup",
+      };
     }
   };
 
-  const logout = async () => {
+  const logout = async (): Promise<AuthResult> => {
     try {
       setUser(null);
       await AsyncStorage.removeItem(AUTH_STORAGE_KEY);
+      return { success: true };
     } catch (error) {
       console.error("Logout error:", error);
-      throw error;
+      return {
+        success: false,
+        error: "An unexpected error occurred during logout",
+      };
     }
   };
 

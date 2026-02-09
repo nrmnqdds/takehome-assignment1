@@ -15,10 +15,9 @@ export function Settings() {
         text: "Logout",
         style: "destructive",
         onPress: async () => {
-          try {
-            await logout();
-          } catch (error) {
-            Alert.alert("Error", "Failed to logout");
+          const result = await logout();
+          if (!result.success && result.error) {
+            Alert.alert("Logout Failed", result.error);
           }
         },
       },

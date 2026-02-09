@@ -175,16 +175,17 @@ export function Signup() {
     }
 
     updateFormField("isLoading", true);
-    try {
-      await signup({ name: name.trim(), email: email.trim(), password });
-    } catch (error) {
-      Alert.alert(
-        "Signup Failed",
-        error instanceof Error ? error.message : "An error occurred",
-      );
-    } finally {
-      updateFormField("isLoading", false);
+    const result = await signup({
+      name: name.trim(),
+      email: email.trim(),
+      password,
+    });
+    updateFormField("isLoading", false);
+
+    if (!result.success && result.error) {
+      Alert.alert("Signup Failed", result.error);
     }
+    // Navigation will be handled automatically by the auth state change
   };
 
   const { name, email, password, confirmPassword, isLoading, showPassword } =
